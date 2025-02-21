@@ -70,12 +70,15 @@ public class MirrorImpl implements Mirror {
 
   @Override
   public Stream<ReflectedMethod> methods() {
-    return Stream.empty();
+    return new ClassIterator(target)
+      .stream()
+      .flatMap(type -> Stream.of(type.getDeclaredMethods()))
+      .map(method -> new TruggerReflectedMethod(method, target));
   }
 
   @Override
   public Optional<ReflectedMethod> method(String name, Class<?>... parameterTypes) {
-    if (parameterTypes.length == 0) {
+    if (parameterTypes.length > 0) {
       return new ClassIterator(target)
         .stream()
         .map(type -> {
