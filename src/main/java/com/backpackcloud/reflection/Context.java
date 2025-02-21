@@ -22,49 +22,68 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.factory;
+package com.backpackcloud.reflection;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-public class DefaultContext implements Context {
+public class Context {
 
-  private final List<Entry> entries;
+  private final List<Context.Entry> entries;
   private Function<Parameter, Object> defaultFunction = parameter -> null;
 
-  public DefaultContext() {
+  public Context() {
     this.entries = new ArrayList<>();
   }
 
-  @Override
   public Mapper when(Predicate<? super Parameter> condition) {
     return function -> {
-      entries.add(new Entry(function, condition));
-      return DefaultContext.this;
+      entries.add(new Context.Entry(function, condition));
+      return Context.this;
     };
   }
 
-  @Override
   public Mapper orElse() {
     return function -> {
       defaultFunction = function;
-      
-      return DefaultContext.this;
+
+      return Context.this;
     };
   }
 
-  @Override
+  public Mapper whenNamed(String name) {
+    return when(parameter -> parameter.getName().equals(name));
+  }
+
+  public Mapper whenOfType(Class<?> type) {
+    return when(parameter -> type.isAssignableFrom(parameter.getType()));
+  }
+
+  public Mapper whenAnnotatedWith(Class<? extends Annotation> annotationType) {
+    return when(parameter -> parameter.isAnnotationPresent(annotationType));
+  }
+
   public Optional<Object> resolve(Parameter parameter) {
-    for (Entry entry : entries) {
+    for (Context.Entry entry : entries) {
       if (entry.predicate.test(parameter)) {
         return Optional.ofNullable(entry.function.apply(parameter));
       }
     }
     return Optional.ofNullable(defaultFunction.apply(parameter));
+  }
+
+  public Object[] resolve(Parameter[] parameters) {
+    Object[] args = new Object[parameters.length];
+    for (int i = 0; i < parameters.length; i++) {
+      args[i] = resolve(parameters[i]).orElse(null);
+    }
+    return args;
   }
 
   private static class Entry {
@@ -77,6 +96,20 @@ public class DefaultContext implements Context {
       this.function = supplier;
       this.predicate = predicate;
     }
+
+  }
+
+  public interface Mapper {
+
+    default Context use(Object object) {
+      return use((parameter) -> object);
+    }
+
+    default Context use(Supplier supplier) {
+      return use(parameter -> supplier.get());
+    }
+
+    Context use(Function<Parameter, Object> function);
 
   }
 

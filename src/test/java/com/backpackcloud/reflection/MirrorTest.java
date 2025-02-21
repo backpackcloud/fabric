@@ -2,19 +2,15 @@ package com.backpackcloud.reflection;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static com.backpackcloud.reflection.Reflection.reflect;
+import static com.backpackcloud.reflection.Mirror.reflect;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ReflectionTest {
+public class MirrorTest {
 
   @Test
   public void testListMethods() {
-    List<ReflectedMethod> methods = reflect(Object.class).methods().toList();
-
-    assertEquals(12, methods.size());
+    assertEquals(12, reflect(Object.class).methods().size());
   }
 
   @Test
@@ -35,9 +31,7 @@ public class ReflectionTest {
 
   @Test
   public void testListFields() {
-    List<ReflectedField> fields = reflect(String.class).fields().toList();
-
-    assertEquals(11, fields.size());
+    assertEquals(11, reflect(String.class).fields().size());
   }
 
   @Test
@@ -50,8 +44,8 @@ public class ReflectionTest {
 
   @Test
   public void testListConstructors() {
-    assertEquals(1, reflect(Object.class).constructors().toList().size());
-    assertEquals(19, reflect(String.class).constructors().toList().size());
+    assertEquals(1, reflect(Object.class).constructors().size());
+    assertEquals(19, reflect(String.class).constructors().size());
   }
 
 }

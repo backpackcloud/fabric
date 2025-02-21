@@ -24,21 +24,105 @@
 
 package com.backpackcloud.reflection;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public interface Mirror {
+public class Mirror {
 
-  Stream<ReflectedField> fields();
+  private final Class targetType;
+  private final List<Class> targetHierarchy;
 
-  Optional<ReflectedField> field(String name);
+  public Mirror(Class targetType) {
+    this.targetType = targetType;
+    this.targetHierarchy = new ArrayList<>();
+    for (Class c = targetType; c != null; c = c.getSuperclass()) {
+      this.targetHierarchy.add(c);
+    }
+  }
 
-  Stream<ReflectedMethod> methods();
+  public List<Field> fields() {
+    List<Field> result = new ArrayList<>();
+    for (Class type : targetHierarchy) {
+      result.addAll(List.of(type.getDeclaredFields()));
+    }
+    return result;
+  }
 
-  Optional<ReflectedMethod> method(String name, Class<?>... parameterTypes);
+  public Optional<Field> field(String name) {
+    return targetHierarchy
+      .stream()
+      .map(type -> {
+        try {
+          return type.getDeclaredField(name);
+        } catch (NoSuchFieldException e) {
+          return null;
+        }
+      })
+      .filter(Objects::nonNull)
+      .findFirst();
+  }
 
-  Stream<ReflectedConstructor> constructors();
+  public List<Method> methods() {
+    List<Method> result = new ArrayList<>();
+    for (Class type : targetHierarchy) {
+      result.addAll(List.of(type.getDeclaredMethods()));
+    }
+    return result;
+  }
 
-  Optional<ReflectedConstructor> constructor(Class<?>... parameterTypes);
+  public Optional<Method> method(String name, Class<?>... parameterTypes) {
+    if (parameterTypes.length > 0) {
+      return targetHierarchy
+        .stream()
+        .map(type -> {
+          try {
+            return type.getDeclaredMethod(name, parameterTypes);
+          } catch (NoSuchMethodException e) {
+            return null;
+          }
+        })
+        .filter(Objects::nonNull)
+        .findFirst();
+    }
+
+    return targetHierarchy
+      .stream()
+      .flatMap(type -> Stream.of(type.getDeclaredMethods()))
+      .filter(method -> method.getName().equals(name))
+      .findFirst();
+  }
+
+  public List<Constructor> constructors() {
+    return List.of(targetType.getDeclaredConstructors());
+  }
+
+  public Optional<Constructor> constructor(Class<?>... parameterTypes) {
+    if (parameterTypes != null) {
+      try {
+        return Optional.of(targetType.getDeclaredConstructor(parameterTypes));
+      } catch (NoSuchMethodException e) {
+        return Optional.empty();
+      }
+    }
+    return Stream.of(targetType.getDeclaredConstructors())
+      .findFirst();
+  }
+
+  public static Mirror reflect(Object target) {
+    Class type;
+    if (target instanceof Annotation) {
+      type = ((Annotation) target).annotationType();
+    } else {
+      type = target instanceof Class ? ((Class<?>) target) : target.getClass();
+    }
+    return new Mirror(type);
+  }
 
 }
