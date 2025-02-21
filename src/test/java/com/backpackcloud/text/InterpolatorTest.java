@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud;
+package com.backpackcloud.text;
 
-import com.backpackcloud.text.Interpolator;
+import com.backpackcloud.UnbelievableException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

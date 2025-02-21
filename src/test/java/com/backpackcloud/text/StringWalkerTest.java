@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud;
+package com.backpackcloud.text;
 
-import com.backpackcloud.text.StringWalker;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
