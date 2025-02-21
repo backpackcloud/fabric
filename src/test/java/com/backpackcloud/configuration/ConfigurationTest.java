@@ -22,13 +22,8 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud;
+package com.backpackcloud.configuration;
 
-import com.backpackcloud.configuration.Configuration;
-import com.backpackcloud.configuration.EnvironmentVariableConfiguration;
-import com.backpackcloud.configuration.FileConfiguration;
-import com.backpackcloud.configuration.RawValueConfiguration;
-import com.backpackcloud.configuration.ResourceConfiguration;
 import org.junit.jupiter.api.Test;
 
 import static com.backpackcloud.configuration.Configuration.configuration;
@@ -126,37 +121,10 @@ public class ConfigurationTest {
   }
 
   @Test
-  public void testIntConversion() {
-    Configuration value = Configuration.value("10");
-    assertTrue(value.isSet());
-    assertEquals("10", value.get());
-    assertEquals(10, value.asInt());
-  }
-
-  @Test
-  public void testLongConversion() {
-    Configuration value = Configuration.value("100000000000000");
-    assertTrue(value.isSet());
-    assertEquals("100000000000000", value.get());
-    assertEquals(100000000000000L, value.asLong());
-  }
-
-  @Test
-  public void testBooleanConversion() {
-    Configuration value = Configuration.value("true");
-    assertTrue(value.isSet());
-    assertEquals("true", value.get());
-    assertTrue(value.asBoolean());
-  }
-
-  @Test
   public void testNotSuppliedConfiguration() {
     Configuration value = Configuration.NOT_SUPPLIED;
     assertFalse(value.isSet());
     assertEquals("", value.get());
-    assertEquals(0, value.asInt());
-    assertEquals(0L, value.asLong());
-    assertFalse(value.asBoolean());
     assertEquals("", value.read());
     assertTrue(value.readLines().isEmpty());
   }
