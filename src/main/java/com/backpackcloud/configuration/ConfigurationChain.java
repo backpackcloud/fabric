@@ -25,7 +25,6 @@
 package com.backpackcloud.configuration;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class ConfigurationChain implements Configuration {
 
@@ -46,21 +45,6 @@ public class ConfigurationChain implements Configuration {
   }
 
   @Override
-  public int asInt() {
-    return configuration.asInt();
-  }
-
-  @Override
-  public long asLong() {
-    return configuration.asLong();
-  }
-
-  @Override
-  public boolean asBoolean() {
-    return configuration.asBoolean();
-  }
-
-  @Override
   public String read() {
     return configuration.read();
   }
@@ -73,31 +57,6 @@ public class ConfigurationChain implements Configuration {
   @Override
   public Configuration or(Configuration defaultConfiguration) {
     return configuration.or(defaultConfiguration);
-  }
-
-  @Override
-  public String or(Supplier<String> supplier) {
-    return configuration.or(supplier);
-  }
-
-  @Override
-  public String orElse(String defaultValue) {
-    return configuration.orElse(defaultValue);
-  }
-
-  @Override
-  public int orElse(int defaultValue) {
-    return configuration.orElse(defaultValue);
-  }
-
-  @Override
-  public long orElse(long defaultValue) {
-    return configuration.orElse(defaultValue);
-  }
-
-  @Override
-  public boolean orElse(boolean defaultValue) {
-    return configuration.orElse(defaultValue);
   }
 
   public ConfigurationChain env(String key) {

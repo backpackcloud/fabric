@@ -25,22 +25,20 @@
 package com.backpackcloud.configuration;
 
 import com.backpackcloud.UnbelievableException;
+import com.backpackcloud.text.InputValue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Interface that defines a configuration that can be supplied via different sources.
  *
  * @author Marcelo Guimarães
  */
-public interface Configuration extends Supplier<String> {
+public interface Configuration extends InputValue {
 
   /**
    * Represents a not supplied configuration.
@@ -61,58 +59,6 @@ public interface Configuration extends Supplier<String> {
     return this;
   }
 
-  default <E> Optional<E> map(Function<Configuration, E> function) {
-    return isSet() ? Optional.ofNullable(function.apply(this)) : Optional.empty();
-  }
-
-  /**
-   * Gets the value of this configuration.
-   *
-   * @return the configuration value.
-   */
-  String get();
-
-  /**
-   * Gets the value of this configuration as an {@code int}.
-   *
-   * @return an {@code int} value defined by this configuration.
-   */
-  default int asInt() {
-    return Integer.parseInt(get());
-  }
-
-  /**
-   * Gets the value of this configuration as an {@code long}.
-   *
-   * @return a {@code long} value defined by this configuration.
-   */
-  default long asLong() {
-    return Long.parseLong(get());
-  }
-
-  /**
-   * Gets the value of this configuration as an {@code boolean}.
-   *
-   * @return a {@code boolean} value defined by this configuration.
-   */
-  default boolean asBoolean() {
-    return Boolean.parseBoolean(get());
-  }
-
-  /**
-   * Gets the value of this configuration as an Enum.
-   *
-   * @param enumType the enum type
-   * @return the Enum which represents this configuration value
-   */
-  default <T extends Enum<T>> T asEnum(Class<T> enumType) {
-    return Enum.valueOf(enumType, get().toUpperCase().replaceAll("-", "_"));
-  }
-
-  default String[] asArray() {
-    return get().split("\\s*,\\s*");
-  }
-
   /**
    * Assumes this configuration value is pointing to an external location
    * and reads the value at that location.
@@ -121,7 +67,10 @@ public interface Configuration extends Supplier<String> {
    */
   default String read() {
     try {
-      return Files.readString(Path.of(get()));
+      Path path = text()
+        .map(Path::of)
+        .orElseThrow();
+      return Files.readString(path);
     } catch (IOException e) {
       throw new UnbelievableException(e);
     }
@@ -135,7 +84,10 @@ public interface Configuration extends Supplier<String> {
    */
   default List<String> readLines() {
     try {
-      return Files.readAllLines(Path.of(get()));
+      Path path = text()
+        .map(Path::of)
+        .orElseThrow();
+      return Files.readAllLines(path);
     } catch (IOException e) {
       throw new UnbelievableException(e);
     }
@@ -150,70 +102,6 @@ public interface Configuration extends Supplier<String> {
    */
   default Configuration or(Configuration defaultConfiguration) {
     return isSet() ? this : defaultConfiguration;
-  }
-
-  default String or(Supplier<String> supplier) {
-    return isSet() ? get() : supplier.get();
-  }
-
-  /**
-   * Returns this configuration value if it's {@link #isSet() set}, otherwise
-   * returns the given {@code defaultValue}.
-   *
-   * @param defaultValue the default value to return
-   * @return this configuration value or the default value in case this
-   * configuration is not set.
-   */
-  default String orElse(String defaultValue) {
-    return isSet() ? get() : defaultValue;
-  }
-
-  /**
-   * Returns this configuration value if it's {@link #isSet() set}, otherwise
-   * returns the given {@code defaultValue}.
-   *
-   * @param defaultValue the default value to return
-   * @return this configuration value or the default value in case this
-   * configuration is not set.
-   */
-  default int orElse(int defaultValue) {
-    return isSet() ? asInt() : defaultValue;
-  }
-
-  /**
-   * Returns this configuration value if it's {@link #isSet() set}, otherwise
-   * returns the given {@code defaultValue}.
-   *
-   * @param defaultValue the default value to return
-   * @return this configuration value or the default value in case this
-   * configuration is not set.
-   */
-  default long orElse(long defaultValue) {
-    return isSet() ? asLong() : defaultValue;
-  }
-
-  /**
-   * Returns this configuration value if it's {@link #isSet() set}, otherwise
-   * returns the given {@code defaultValue}.
-   *
-   * @param defaultValue the default value to return
-   * @return this configuration value or the default value in case this
-   * configuration is not set.
-   */
-  default boolean orElse(boolean defaultValue) {
-    return isSet() ? asBoolean() : defaultValue;
-  }
-
-  /**
-   * Returns this configuration value if it's {@link #isSet() set}, otherwise
-   * returns the given {@code defaultValue}.
-   *
-   * @param defaultValue the default value to return
-   * @return this configuration value or the default value in case this
-   * configuration is not set.
-   */
-  default <T extends Enum<T>> T orElse(T defaultValue) {
-    return isSet() ? asEnum(defaultValue.getDeclaringClass()) : defaultValue;
   }
 
   static ConfigurationChain configuration() {

@@ -40,21 +40,6 @@ public class NotSuppliedConfiguration implements Configuration {
   }
 
   @Override
-  public int asInt() {
-    return 0;
-  }
-
-  @Override
-  public long asLong() {
-    return 0L;
-  }
-
-  @Override
-  public boolean asBoolean() {
-    return false;
-  }
-
-  @Override
   public String read() {
     return "";
   }

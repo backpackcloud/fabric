@@ -26,9 +26,11 @@ package com.backpackcloud.text;
 
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalQuery;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public interface InputValue extends Supplier<String> {
 
@@ -84,6 +86,11 @@ public interface InputValue extends Supplier<String> {
     } catch (IllegalArgumentException e) {
       return Optional.empty();
     }
+  }
+
+  default Stream<InputValue> split() {
+    return Arrays.stream(get().split("\\s*,\\s*"))
+      .map(InputValue::of);
   }
 
   static InputValue of(String input) {
