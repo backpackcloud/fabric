@@ -40,7 +40,6 @@ public class TruggerReflectedMethod extends TruggerReflectedObject<Method> imple
     super(method);
     this.method = method;
     this.target = target;
-    method.trySetAccessible();
   }
 
   @Override
@@ -56,6 +55,7 @@ public class TruggerReflectedMethod extends TruggerReflectedObject<Method> imple
   @Override
   public <E> E invoke(Object... args) {
     try {
+      method.trySetAccessible();
       return (E) method.invoke(target, args);
     } catch (InvocationTargetException e) {
       throw new ReflectionException(e.getCause());

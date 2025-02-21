@@ -38,12 +38,12 @@ public class TruggerReflectedField extends TruggerReflectedObject<Field> impleme
     super(field);
     this.field = field;
     this.target = target;
-    field.trySetAccessible();
   }
 
   @Override
   public <E> E get() {
     try {
+      field.trySetAccessible();
       return (E) field.get(target);
     } catch (IllegalAccessException e) {
       throw new ReflectionException(e);
@@ -53,6 +53,7 @@ public class TruggerReflectedField extends TruggerReflectedObject<Field> impleme
   @Override
   public void set(Object newValue) {
     try {
+      field.trySetAccessible();
       field.set(target, newValue);
     } catch (Exception e) {
       throw new ReflectionException(e);

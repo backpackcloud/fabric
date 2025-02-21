@@ -37,7 +37,6 @@ public class TruggerReflectedConstructor extends TruggerReflectedObject<Construc
   public TruggerReflectedConstructor(Constructor<?> constructor) {
     super(constructor);
     this.constructor = constructor;
-    constructor.setAccessible(true);
   }
 
   @Override
@@ -53,6 +52,7 @@ public class TruggerReflectedConstructor extends TruggerReflectedObject<Construc
   @Override
   public <E> E invoke(Object... args) {
     try {
+      constructor.trySetAccessible();
       return (E) constructor.newInstance(args);
     } catch (InvocationTargetException e) {
       throw new ReflectionException(e.getCause());
