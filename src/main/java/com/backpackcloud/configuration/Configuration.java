@@ -67,7 +67,7 @@ public interface Configuration extends InputValue {
    */
   default String read() {
     try {
-      Path path = text()
+      Path path = asText()
         .map(Path::of)
         .orElseThrow();
       return Files.readString(path);
@@ -84,7 +84,7 @@ public interface Configuration extends InputValue {
    */
   default List<String> readLines() {
     try {
-      Path path = text()
+      Path path = asText()
         .map(Path::of)
         .orElseThrow();
       return Files.readAllLines(path);

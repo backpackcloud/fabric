@@ -37,16 +37,16 @@ public interface InputValue extends Supplier<String> {
   @Override
   String get();
 
-  default Optional<String> text() {
+  default <T> Optional<T> map(Function<String, T> mapper) {
+    return asText().map(mapper);
+  }
+
+  default Optional<String> asText() {
     String value = get();
     return value == null || value.isEmpty() ? Optional.empty() : Optional.of(value);
   }
 
-  default <T> Optional<T> map(Function<String, T> mapper) {
-    return text().map(mapper);
-  }
-
-  default Optional<Integer> integer() {
+  default Optional<Integer> asInteger() {
     try {
       return map(Integer::parseInt);
     } catch (NumberFormatException e) {
@@ -54,7 +54,7 @@ public interface InputValue extends Supplier<String> {
     }
   }
 
-  default Optional<Long> number() {
+  default Optional<Long> asLong() {
     try {
       return map(Long::parseLong);
     } catch (NumberFormatException e) {
@@ -62,7 +62,7 @@ public interface InputValue extends Supplier<String> {
     }
   }
 
-  default Optional<Double> decimal() {
+  default Optional<Double> asDouble() {
     try {
       return map(Double::parseDouble);
     } catch (NumberFormatException e) {
@@ -70,15 +70,15 @@ public interface InputValue extends Supplier<String> {
     }
   }
 
-  default Optional<Boolean> bool() {
+  default Optional<Boolean> asBoolean() {
     return map(Boolean::parseBoolean);
   }
 
-  default <T> Optional<T> temporal(String pattern, TemporalQuery<T> query) {
+  default <T> Optional<T> asTemporal(String pattern, TemporalQuery<T> query) {
     return map(input -> DateTimeFormatter.ofPattern(pattern).parse(input, query));
   }
 
-  default <T extends Enum<T>> Optional<T> identify(Class<T> enumType) {
+  default <T extends Enum<T>> Optional<T> asEnum(Class<T> enumType) {
     try {
       return map(String::toUpperCase)
         .map(input -> input.replaceAll("([- .])", "_"))
