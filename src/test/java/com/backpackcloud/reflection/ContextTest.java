@@ -22,8 +22,8 @@ public class ContextTest {
   @Test
   public void test() throws NoSuchMethodException {
     Context context = new Context();
-    context.whenOfType(String.class).use("foo");
-    context.whenOfType(Exception.class).use(() -> new UnbelievableException());
+    context.when(String.class).use("foo");
+    context.when(Exception.class).use(() -> new UnbelievableException());
     context.whenAnnotatedWith(Deprecated.class).use(10);
 
     Method method = ContextTest.class.getDeclaredMethod("doSomething", String.class);

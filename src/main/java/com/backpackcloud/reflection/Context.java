@@ -57,11 +57,11 @@ public class Context {
     };
   }
 
-  public Mapper whenNamed(String name) {
+  public Mapper when(String name) {
     return when(parameter -> parameter.getName().equals(name));
   }
 
-  public Mapper whenOfType(Class<?> type) {
+  public Mapper when(Class<?> type) {
     return when(parameter -> type.isAssignableFrom(parameter.getType()));
   }
 
@@ -86,16 +86,7 @@ public class Context {
     return args;
   }
 
-  private static class Entry {
-
-    private final Function<Parameter, Object> function;
-    private final Predicate<? super Parameter> predicate;
-
-    private Entry(Function<Parameter, Object> supplier,
-                  Predicate<? super Parameter> predicate) {
-      this.function = supplier;
-      this.predicate = predicate;
-    }
+  private record Entry(Function<Parameter, Object> function, Predicate<? super Parameter> predicate) {
 
   }
 
