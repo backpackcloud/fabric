@@ -24,7 +24,6 @@
 
 package com.backpackcloud.reflection;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,37 +35,36 @@ import java.util.function.Supplier;
 public class Context {
 
   private final List<Context.Entry> entries;
-  private Function<Parameter, Object> defaultFunction = parameter -> null;
 
   public Context() {
     this.entries = new ArrayList<>();
   }
 
-  public Mapper when(Predicate<? super Parameter> condition) {
-    return function -> {
-      entries.add(new Context.Entry(function, condition));
-      return Context.this;
-    };
+  public Context when(Predicate<? super Parameter> condition, Object object) {
+    this.entries.add(new Entry(condition, parameter -> object));
+    return this;
   }
 
-  public Mapper orElse() {
-    return function -> {
-      defaultFunction = function;
-
-      return Context.this;
-    };
+  public Context when(Predicate<? super Parameter> condition, Supplier supplier) {
+    this.entries.add(new Entry(condition, parameter -> supplier.get()));
+    return this;
   }
 
-  public Mapper when(String name) {
-    return when(parameter -> parameter.getName().equals(name));
+  public Context when(Predicate<? super Parameter> condition, Function<Parameter, Object> function) {
+    this.entries.add(new Entry(condition, function));
+    return this;
   }
 
-  public Mapper when(Class<?> type) {
-    return when(parameter -> type.isAssignableFrom(parameter.getType()));
+  public void orElse(Object object) {
+    when(parameter -> true, object);
   }
 
-  public Mapper whenAnnotatedWith(Class<? extends Annotation> annotationType) {
-    return when(parameter -> parameter.isAnnotationPresent(annotationType));
+  public void orElse(Supplier supplier) {
+    when(parameter -> true, supplier);
+  }
+
+  public void orElse(Function<Parameter, Object> function) {
+    when(parameter -> true, function);
   }
 
   public Optional<Object> resolve(Parameter parameter) {
@@ -75,7 +73,7 @@ public class Context {
         return Optional.ofNullable(entry.function.apply(parameter));
       }
     }
-    return Optional.ofNullable(defaultFunction.apply(parameter));
+    return Optional.empty();
   }
 
   public Object[] resolve(Parameter[] parameters) {
@@ -86,21 +84,7 @@ public class Context {
     return args;
   }
 
-  private record Entry(Function<Parameter, Object> function, Predicate<? super Parameter> predicate) {
-
-  }
-
-  public interface Mapper {
-
-    default Context use(Object object) {
-      return use((parameter) -> object);
-    }
-
-    default Context use(Supplier supplier) {
-      return use(parameter -> supplier.get());
-    }
-
-    Context use(Function<Parameter, Object> function);
+  private record Entry(Predicate<? super Parameter> predicate, Function<Parameter, Object> function) {
 
   }
 

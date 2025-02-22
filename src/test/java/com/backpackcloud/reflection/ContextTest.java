@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
+import static com.backpackcloud.reflection.Predicates.annotatedWith;
+import static com.backpackcloud.reflection.Predicates.ofType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
@@ -22,9 +24,9 @@ public class ContextTest {
   @Test
   public void test() throws NoSuchMethodException {
     Context context = new Context();
-    context.when(String.class).use("foo");
-    context.when(Exception.class).use(() -> new UnbelievableException());
-    context.whenAnnotatedWith(Deprecated.class).use(10);
+    context.when(ofType(String.class), "foo");
+    context.when(ofType(Exception.class), () -> new UnbelievableException());
+    context.when(annotatedWith(Deprecated.class), 10);
 
     Method method = ContextTest.class.getDeclaredMethod("doSomething", String.class);
     Object[] args = context.resolve(method.getParameters());
