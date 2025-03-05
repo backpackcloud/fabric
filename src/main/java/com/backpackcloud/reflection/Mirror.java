@@ -34,11 +34,22 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/// A class that acts as a helper for basic reflection operations.
+///
+/// Use this class if you need to go through all the hierarchy of a
+/// target in search for elements.
+///
+/// @author Ataxexe
 public class Mirror {
 
+  /// The target of this mirror instance
   private final Class targetType;
+  /// The computed class hierarchy of the target
   private final List<Class> targetHierarchy;
 
+  /// Creates a new mirror targeting the given class
+  ///
+  /// @param targetType the target class
   public Mirror(Class targetType) {
     this.targetType = targetType;
     this.targetHierarchy = new ArrayList<>();
@@ -47,6 +58,10 @@ public class Mirror {
     }
   }
 
+  /// Reflects the fields of the target class and its superclasses.
+  ///
+  /// @return a list of every field found in the target hierarchy.
+  /// @see Class#getDeclaredFields()
   public List<Field> fields() {
     List<Field> result = new ArrayList<>();
     for (Class type : targetHierarchy) {
@@ -55,6 +70,13 @@ public class Mirror {
     return result;
   }
 
+  /// Reflects the field declared with the given name. If there are
+  /// multiple fields with the same name down in the target hierarchy,
+  /// returns the one found in the furthest class from Object.
+  ///
+  /// @param name the name of the field
+  /// @return the field that is declared with the given name.
+  /// @see Class#getDeclaredField(String)
   public Optional<Field> field(String name) {
     return targetHierarchy
       .stream()
@@ -69,6 +91,10 @@ public class Mirror {
       .findFirst();
   }
 
+  /// Reflects the methods of the target class and its superclasses.
+  ///
+  /// @return a list of every method found in the target hierarchy.
+  /// @see Class#getDeclaredMethods()
   public List<Method> methods() {
     List<Method> result = new ArrayList<>();
     for (Class type : targetHierarchy) {
@@ -77,6 +103,14 @@ public class Mirror {
     return result;
   }
 
+  /// Reflects the method declared with the given name and parameter types.
+  /// If there are multiple methods with the same signature in the target
+  /// hierarchy, returns the one found in the furthest class from Object.
+  ///
+  /// @param name           the name of the method
+  /// @param parameterTypes the parameter types
+  /// @return the field that is declared with the given name.
+  /// @see Class#getDeclaredMethod(String, Class[])
   public Optional<Method> method(String name, Class<?>... parameterTypes) {
     if (parameterTypes.length > 0) {
       return targetHierarchy
@@ -99,22 +133,31 @@ public class Mirror {
       .findFirst();
   }
 
+  /// Reflects the constructors of the target.
+  ///
+  /// @return the constructors found in the target class.
+  /// @see Class#getDeclaredConstructors()
   public List<Constructor> constructors() {
     return List.of(targetType.getDeclaredConstructors());
   }
 
+  /// Reflects the constructor that matches the given signature.
+  ///
+  /// @param parameterTypes the parameter types declared in the constructor
+  /// @return the constructor that matches the given signature.
+  /// @see Class#getDeclaredConstructor(Class[])
   public Optional<Constructor> constructor(Class<?>... parameterTypes) {
-    if (parameterTypes != null) {
-      try {
-        return Optional.of(targetType.getDeclaredConstructor(parameterTypes));
-      } catch (NoSuchMethodException e) {
-        return Optional.empty();
-      }
+    try {
+      return Optional.of(targetType.getDeclaredConstructor(parameterTypes));
+    } catch (NoSuchMethodException e) {
+      return Optional.empty();
     }
-    return Stream.of(targetType.getDeclaredConstructors())
-      .findFirst();
   }
 
+  /// Creates a new Mirror targeting the type of the given object.
+  ///
+  /// @return a Mirror instance targeting the object's type.
+  /// @see Mirror#Mirror(Class)
   public static Mirror reflect(Object target) {
     Class type;
     if (target instanceof Annotation) {

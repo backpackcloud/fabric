@@ -26,10 +26,27 @@ package com.backpackcloud.configuration;
 
 import java.util.List;
 
+/// A class that acts as a Configuration, but provides mechanisms to chain the
+/// configuration using other configurations.
+///
+/// Essentially, the first configuration in the chain is the highest priority.
+/// Any other configuration chained will be used only if the previous one
+/// is {@link Configuration#isSet() not set}.
+///
+/// This class is immutable, so all chaining methods will return a new object.
+///
+/// @author Ataxexe
 public class ConfigurationChain implements Configuration {
 
+  /// The actual Configuration this class will delegate the interface methods.
   private final Configuration configuration;
 
+  /// Creates a new chain using the given configuration as the first priority.
+  ///
+  /// If the given configuration is already a chain, its priority will be taken
+  /// into account automatically.
+  ///
+  /// @param configuration the configuration to create the chain, might be already a chain
   public ConfigurationChain(Configuration configuration) {
     this.configuration = configuration;
   }
@@ -59,32 +76,52 @@ public class ConfigurationChain implements Configuration {
     return configuration.or(defaultConfiguration);
   }
 
-  public ConfigurationChain env(String key) {
-    return new ConfigurationChain(configuration.or(Configuration.env(key)));
+  /// Chains this configuration with an environment configuration.
+  ///
+  //// @return a new chain object
+  /// @see Configuration#env(String)
+  public ConfigurationChain env(String name) {
+    return new ConfigurationChain(configuration.or(Configuration.env(name)));
   }
 
-  public ConfigurationChain file(String key) {
-    return new ConfigurationChain(configuration.or(Configuration.file(key)));
+  /// Chains this configuration with a file configuration.
+  ///
+  /// @return a new chain object
+  /// @see Configuration#file(String)
+  public ConfigurationChain file(String location) {
+    return new ConfigurationChain(configuration.or(Configuration.file(location)));
   }
 
-  public ConfigurationChain resource(ClassLoader classLoader, String key) {
-    return new ConfigurationChain(configuration.or(Configuration.resource(classLoader, key)));
+  /// Chains this configuration with a resource configuration.
+  ///
+  /// @return a new chain object
+  /// @see Configuration#resource(String)
+  public ConfigurationChain resource(String location) {
+    return new ConfigurationChain(configuration.or(Configuration.resource(location)));
   }
 
-  public ConfigurationChain resource(String key) {
-    return new ConfigurationChain(configuration.or(Configuration.resource(Thread.currentThread().getContextClassLoader(), key)));
+  /// Chains this configuration with a property configuration.
+  ///
+  /// @return a new chain object
+  /// @see Configuration#property(String)
+  public ConfigurationChain property(String name) {
+    return new ConfigurationChain(configuration.or(Configuration.property(name)));
   }
 
-  public ConfigurationChain property(String key) {
-    return new ConfigurationChain(configuration.or(Configuration.property(key)));
+  /// Chains this configuration with a url configuration.
+  ///
+  /// @return a new chain object
+  /// @see Configuration#url(String)
+  public ConfigurationChain url(String location) {
+    return new ConfigurationChain(configuration.or(Configuration.url(location)));
   }
 
-  public ConfigurationChain url(String key) {
-    return new ConfigurationChain(configuration.or(Configuration.url(key)));
-  }
-
-  public ConfigurationChain value(String key) {
-    return new ConfigurationChain(configuration.or(Configuration.value(key)));
+  /// Chains this configuration with a value configuration.
+  ///
+  /// @return a new chain object
+  /// @see Configuration#value(String)
+  public ConfigurationChain value(String value) {
+    return new ConfigurationChain(configuration.or(Configuration.value(value)));
   }
 
 }

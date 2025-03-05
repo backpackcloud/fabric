@@ -43,8 +43,7 @@ public class ResourceConfiguration implements Configuration {
   }
 
   public ResourceConfiguration(String resourcePath) {
-    this.classLoader = Thread.currentThread().getContextClassLoader();
-    this.resourcePath = resourcePath;
+    this(Thread.currentThread().getContextClassLoader(), resourcePath);
   }
 
   @Override

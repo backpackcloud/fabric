@@ -25,6 +25,7 @@
 package com.backpackcloud.text;
 
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalQuery;
 import java.util.Arrays;
 import java.util.Optional;
@@ -32,20 +33,39 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/// Interface that abstracts a value that is external to the source code, provided as a String
+/// (like a configuration parameter).
+///
+/// This interface aims to be a simplistic way of handling such values.
+///
+/// @author Ataxexe
 public interface InputValue extends Supplier<String> {
 
+  /// Gets this input value as it is. Might be {@code null}.
+  ///
+  /// @see #asText()
   @Override
   String get();
 
-  default <T> Optional<T> map(Function<String, T> mapper) {
-    return asText().map(mapper);
-  }
-
+  /// Wraps the input value in an Optional for handling {@code null} values in an easier way.
+  ///
+  /// @return the input value wrapped in an Optional object.
   default Optional<String> asText() {
     String value = get();
     return value == null || value.isEmpty() ? Optional.empty() : Optional.of(value);
   }
 
+  /// Short to {@code asText().map(mapper)}
+  default <T> Optional<T> map(Function<String, T> mapper) {
+    return asText().map(mapper);
+  }
+
+  /// Converts the {@link #asText() text} value to an Integer object.
+  ///
+  /// An exception while converting will result in an empty Optional.
+  ///
+  /// @return the result of the conversion.
+  /// @see Integer#parseInt(String)
   default Optional<Integer> asInteger() {
     try {
       return map(Integer::parseInt);
@@ -54,6 +74,12 @@ public interface InputValue extends Supplier<String> {
     }
   }
 
+  /// Converts the {@link #asText() text} value to a Long object.
+  ///
+  /// An exception while converting will result in an empty Optional.
+  ///
+  /// @return the result of the conversion.
+  /// @see Long#parseLong(String)
   default Optional<Long> asLong() {
     try {
       return map(Long::parseLong);
@@ -62,6 +88,12 @@ public interface InputValue extends Supplier<String> {
     }
   }
 
+  /// Converts the {@link #asText() text} value to a Double object.
+  ///
+  /// An exception while converting will result in an empty Optional.
+  ///
+  /// @return the result of the conversion.
+  /// @see Double#parseDouble(String)
   default Optional<Double> asDouble() {
     try {
       return map(Double::parseDouble);
@@ -70,14 +102,45 @@ public interface InputValue extends Supplier<String> {
     }
   }
 
+  /// Converts the {@link #asText() text} value to a Boolean object.
+  ///
+  /// An exception while converting will result in an empty Optional.
+  ///
+  /// @return the result of the conversion.
+  /// @see Boolean#parseBoolean(String)
   default Optional<Boolean> asBoolean() {
     return map(Boolean::parseBoolean);
   }
 
+  /// Converts the {@link #asText() text} value to a Temporal object defined by the
+  /// provided pattern and TemporalQuery.
+  ///
+  /// An exception while converting will result in an empty Optional.
+  ///
+  /// @return the result of the conversion
+  /// @see DateTimeFormatter#ofPattern(String)
+  /// @see DateTimeFormatter#parse(CharSequence, TemporalQuery)
   default <T> Optional<T> asTemporal(String pattern, TemporalQuery<T> query) {
-    return map(input -> DateTimeFormatter.ofPattern(pattern).parse(input, query));
+    try {
+      return map(input -> DateTimeFormatter.ofPattern(pattern).parse(input, query));
+    } catch (IllegalArgumentException | DateTimeParseException e) {
+      return Optional.empty();
+    }
   }
 
+  /// Converts the {@link #asText() text} value to an Enum object defined by the
+  /// provided enum class.
+  ///
+  /// In order to increase the chances of a successful conversion, the following steps are
+  /// applied prior to the conversion:
+  ///
+  /// - The text is converted to upper case
+  /// - Any occurrences of "-", " ", "." will be replaced by "_"
+  ///
+  /// An exception while converting will result in an empty Optional.
+  ///
+  /// @return the result of the conversion
+  /// @see Enum#valueOf(Class, String)
   default <T extends Enum<T>> Optional<T> asEnum(Class<T> enumType) {
     try {
       return map(String::toUpperCase)
@@ -88,15 +151,27 @@ public interface InputValue extends Supplier<String> {
     }
   }
 
+  /// Splits this InputValue in multiple instances by treating the value as a comma-separated
+  /// array of values.
+  ///
+  /// @return A stream of each input value
   default Stream<InputValue> split() {
     return Arrays.stream(get().split("\\s*,\\s*"))
       .map(InputValue::of);
   }
 
+  /// Creates a basic input value from the provided value.
+  ///
+  /// @param input the actual input value
+  /// @return a new InputValue instance
   static InputValue of(String input) {
     return () -> input;
   }
 
+  /// Creates an input value around the given supplier.
+  ///
+  /// @param input the supplier to wrap into an InputValue
+  /// @return a new InputValue instance
   static InputValue of(Supplier<String> input) {
     return input::get;
   }

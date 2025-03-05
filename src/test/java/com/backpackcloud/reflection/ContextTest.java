@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
-import static com.backpackcloud.reflection.Predicates.annotatedWith;
-import static com.backpackcloud.reflection.Predicates.ofType;
+import static com.backpackcloud.reflection.predicates.ParameterPredicates.annotatedWith;
+import static com.backpackcloud.reflection.predicates.ParameterPredicates.ofType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
@@ -29,17 +29,17 @@ public class ContextTest {
     context.when(annotatedWith(Deprecated.class), 10);
 
     Method method = ContextTest.class.getDeclaredMethod("doSomething", String.class);
-    Object[] args = context.resolve(method.getParameters());
+    Object[] args = context.resolve(method);
     assertEquals(1, args.length);
     assertEquals("foo", args[0]);
 
     method = ContextTest.class.getDeclaredMethod("doSomething", Exception.class);
-    args = context.resolve(method.getParameters());
+    args = context.resolve(method);
     assertEquals(1, args.length);
     assertInstanceOf(UnbelievableException.class, args[0]);
 
     method = ContextTest.class.getDeclaredMethod("doSomething", String.class, Exception.class, int.class);
-    args = context.resolve(method.getParameters());
+    args = context.resolve(method);
     assertEquals(3, args.length);
     assertEquals("foo", args[0]);
     assertInstanceOf(UnbelievableException.class, args[1]);

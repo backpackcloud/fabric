@@ -33,23 +33,17 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
-/**
- * Interface that defines a configuration that can be supplied via different sources.
- *
- * @author Marcelo Guimarães
- */
+/// Interface that defines a configuration that can be supplied via different sources.
+///
+/// @author Ataxexe
 public interface Configuration extends InputValue {
 
-  /**
-   * Represents a not supplied configuration.
-   */
+  /// Represents a not supplied configuration. Basically a `null` object.
   Configuration NOT_SUPPLIED = new NotSuppliedConfiguration();
 
-  /**
-   * Checks if this source has some configuration set.
-   *
-   * @return {@code true} if this source holds any configuration value.
-   */
+  /// Checks if this source has some configuration set.
+  ///
+  /// @return `true` if this source holds any configuration value.
   boolean isSet();
 
   default Configuration ifSet(Consumer<Configuration> action) {
@@ -59,12 +53,10 @@ public interface Configuration extends InputValue {
     return this;
   }
 
-  /**
-   * Assumes this configuration value is pointing to an external location
-   * and reads the value at that location.
-   *
-   * @return the value stored in the location defined by this configuration.
-   */
+  /// Assumes this configuration value is pointing to an external location
+  /// and reads the value at that location.
+  ///
+  /// @return the value stored in the location defined by this configuration.
   default String read() {
     try {
       Path path = asText()
@@ -76,12 +68,10 @@ public interface Configuration extends InputValue {
     }
   }
 
-  /**
-   * Assumes this configuration value is pointing to an external location
-   * and reads the lines at that location.
-   *
-   * @return the lines stored in the location defined by this configuration.
-   */
+  /// Assumes this configuration value is pointing to an external location
+  /// and reads the lines at that location.
+  ///
+  /// @return the lines stored in the location defined by this configuration.
   default List<String> readLines() {
     try {
       Path path = asText()
@@ -93,47 +83,74 @@ public interface Configuration extends InputValue {
     }
   }
 
-  /**
-   * Returns this configuration if it's set or the given default
-   * configuration otherwise.
-   *
-   * @param defaultConfiguration the default configuration to return
-   * @return this configuration or the default one
-   */
+  /// Returns this configuration if it's set or the given default
+  /// configuration otherwise.
+  ///
+  /// @param defaultConfiguration the default configuration to return
+  /// @return this configuration or the default one
   default Configuration or(Configuration defaultConfiguration) {
     return isSet() ? this : defaultConfiguration;
   }
 
+  /// A convenience method for starting a configuration chain which defaults to {@link #NOT_SUPPLIED}.
   static ConfigurationChain configuration() {
-    return new ConfigurationChain(new NotSuppliedConfiguration());
+    return new ConfigurationChain(NOT_SUPPLIED);
   }
 
-  static Configuration env(String key) {
-    return new EnvironmentVariableConfiguration(key);
+  /// Creates and returns a configuration that uses the value stored in an environment variable
+  /// based on the given name.
+  ///
+  /// @param name the environment variable name
+  /// @return a new Configuration object
+  /// @see EnvironmentVariableConfiguration
+  static Configuration env(String name) {
+    return new EnvironmentVariableConfiguration(name);
   }
 
-  static Configuration file(String key) {
-    return new FileConfiguration(key);
+  /// Creates and returns a configuration that uses the file located at the given location.
+  ///
+  /// @param location the file location
+  /// @return a new Configuration object
+  /// @see FileConfiguration
+  static Configuration file(String location) {
+    return new FileConfiguration(location);
   }
 
-  static Configuration resource(ClassLoader classLoader, String key) {
-    return new ResourceConfiguration(classLoader, key);
+  /// Creates and returns a configuration that uses the resource located at the given location.
+  ///
+  /// @param location the resource location
+  /// @return a new Configuration object
+  /// @see ResourceConfiguration
+  static Configuration resource(String location) {
+    return new ResourceConfiguration(location);
   }
 
-  static Configuration resource(String key) {
-    return new ResourceConfiguration(Thread.currentThread().getContextClassLoader(), key);
+  /// Creates and returns a configuration that uses the value stored in a system property
+  /// based on the given name.
+  ///
+  /// @param name the name of the system property
+  /// @return a new Configuration object
+  /// @see SystemPropertyConfiguration
+  static Configuration property(String name) {
+    return new SystemPropertyConfiguration(name);
   }
 
-  static Configuration property(String key) {
-    return new SystemPropertyConfiguration(key);
+  /// Creates and returns a configuration that points to the given url.
+  ///
+  /// @param location the url location
+  /// @return a new Configuration object
+  /// @see UrlConfiguration
+  static Configuration url(String location) {
+    return new UrlConfiguration(location);
   }
 
-  static Configuration url(String key) {
-    return new UrlConfiguration(key);
-  }
-
-  static Configuration value(String key) {
-    return new RawValueConfiguration(key);
+  /// Creates and returns a configuration that only holds the given value.
+  ///
+  /// @param value the value of the configuration
+  /// @return a new Configuration object
+  /// @see RawValueConfiguration
+  static Configuration value(String value) {
+    return new RawValueConfiguration(value);
   }
 
 }

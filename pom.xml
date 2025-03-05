@@ -194,6 +194,14 @@
     </plugins>
   </build>
 
+  <repositories>
+    <repository>
+      <id>my-repo</id>
+      <name>My Repository</name>
+      <url>file://.mvn</url>
+    </repository>
+  </repositories>
+
   <distributionManagement>
     <snapshotRepository>
       <id>${distribution.id}</id>

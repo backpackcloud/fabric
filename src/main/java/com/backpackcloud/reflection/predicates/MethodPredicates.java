@@ -22,25 +22,24 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.reflection;
+package com.backpackcloud.reflection.predicates;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.Method;
 import java.util.function.Predicate;
 
-public final class Predicates {
+public final class MethodPredicates {
 
-  private Predicates() {
+  private MethodPredicates() {
 
   }
 
-  public static Predicate<Parameter> ofType(Class<?> type) {
-    return parameter -> type.isAssignableFrom(parameter.getType());
+  public static Predicate<Method> ofName(String name) {
+    return method -> method.getName().equals(name);
   }
 
-  public static Predicate<AnnotatedElement> annotatedWith(Class<? extends Annotation> annotationType) {
-    return element -> element.isAnnotationPresent(annotationType);
+  public static Predicate<Method> annotatedWith(Class<? extends Annotation> type) {
+    return method -> method.isAnnotationPresent(type);
   }
 
 }

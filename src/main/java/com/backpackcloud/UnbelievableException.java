@@ -24,40 +24,78 @@
 
 package com.backpackcloud;
 
+import java.io.Serial;
 import java.util.function.Supplier;
 
-/**
- * OMG! I can't believe this is happening!
- *
- * @author Marcelo Guimarães
- */
+/// Legend says this exception raises from the deepness circuits, usually awaken by
+/// digital incarnations of Murphy.
+///
+/// Catching this exception may lead to unrecoverable systems, memory leak, data leak,
+/// water leak and butt pain.
+///
+/// @author Ataxexe
 public class UnbelievableException extends RuntimeException {
 
+  @Serial
+  private static final long serialVersionUID = -5430796388952219805L;
+
+  /// Creates the ultimate armageddon. Where no single clue is present,
+  /// and doom is the only fate for us all.
+  ///
+  /// Usually this is a sign that all hope is lost, and you should get cover
+  /// as soon as possible.
+  ///
+  /// @see Exception#Exception()
   public UnbelievableException() {
   }
 
+  /// Conjures the apocalypse by passing a message for its ancestors in a desperate
+  /// move of forgiveness and humility.
+  ///
+  /// @param message your last pray before the end
+  /// @see Exception#Exception(String)
   public UnbelievableException(String message) {
     super(message);
   }
 
+  /// Offers a mere throwable for the Kraken of the bit sea, alongside with a plea.
+  ///
+  /// Do not expect anything good in return. You're on your own.
+  ///
+  /// @param message your plea
+  /// @param cause   your offer
+  /// @see Exception#Exception(String, Throwable)
   public UnbelievableException(String message, Throwable cause) {
     super(message, cause);
   }
 
+  /// Be bold and offer just a single piece of throwable. Your survival chances are
+  /// lower, but the efforts are also significantly lower. What would you expect?
+  ///
+  /// @param cause your offer, it better be good
+  /// @see Exception#Exception(Throwable)
   public UnbelievableException(Throwable cause) {
     super(cause);
   }
 
+  /// Ok, you can try and win by tossing some bureaucracy to the event horizon. Maybe the void
+  /// will spare your life.
+  ///
+  /// But your app is broken either way.
+  ///
+  /// @param message            your plea, make it beautiful and increase your lifespan for at max 42 picoseconds
+  /// @param cause              your offer, it doesn't matter if it's covered with gold, there's enough in the motherboard
+  /// @param enableSuppression  go on and try to disable suppression
+  /// @param writableStackTrace disable writing to stacktrace if you dare
+  /// @see Exception#Exception(String, Throwable, boolean, boolean)
   public UnbelievableException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
   }
 
-  /**
-   * Creates a supplier that uses the given reason as the exception message.
-   *
-   * @param reason the exception message
-   * @return a supplier that creates a new UnbelievableException with the given reason.
-   */
+  /// Throws the crap out of sight, aiming on the fan while leaving time for you to take cover in your toilet.
+  ///
+  /// @param reason the reason for all the madness that's preventing your code from causing even more damage.
+  /// @see #UnbelievableException(String)
   public static Supplier<UnbelievableException> because(String reason) {
     return () -> new UnbelievableException(reason);
   }
