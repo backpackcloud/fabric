@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/// A configuration based solely on a given value.
+///
+/// @author Ataxexe
 public class RawValueConfiguration implements Configuration {
 
   private final String value;
@@ -53,8 +56,8 @@ public class RawValueConfiguration implements Configuration {
 
   @Override
   public List<String> readLines() {
-    Scanner        scanner = new Scanner(read());
-    List<String> lines   = new ArrayList<>();
+    Scanner scanner = new Scanner(read());
+    List<String> lines = new ArrayList<>();
     while (scanner.hasNextLine()) {
       lines.add(scanner.nextLine());
     }

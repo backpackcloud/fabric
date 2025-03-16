@@ -28,20 +28,35 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 import java.util.function.Predicate;
 
+/// A class that holds a set of predicates for using with Parameter objects.
+///
+/// @author Ataxexe
 public final class ParameterPredicates {
 
   private ParameterPredicates() {
 
   }
 
+  /// Creates a predicate that tests if a parameter has the given name.
+  ///
+  /// @param name the name to check
+  /// @return a new predicate
   public static Predicate<Parameter> ofName(String name) {
     return parameter -> parameter.getName().equals(name);
   }
 
+  /// Creates a predicate that tests if a parameter has a type compatible with the given type.
+  ///
+  /// @param type the type to check
+  /// @return a new predicate
   public static Predicate<Parameter> ofType(Class<?> type) {
     return parameter -> type.isAssignableFrom(parameter.getType());
   }
 
+  /// Creates a predicate that tests if a parameter is annotated with the given annotation.
+  ///
+  /// @param type the annotation to check
+  /// @return a new predicate
   public static Predicate<Parameter> annotatedWith(Class<? extends Annotation> type) {
     return parameter -> parameter.isAnnotationPresent(type);
   }

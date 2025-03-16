@@ -25,7 +25,9 @@
 package com.backpackcloud.configuration;
 
 import com.backpackcloud.UnbelievableException;
+import com.backpackcloud.io.deserializers.ConfigurationDeserializer;
 import com.backpackcloud.text.InputValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,6 +38,7 @@ import java.util.function.Consumer;
 /// Interface that defines a configuration that can be supplied via different sources.
 ///
 /// @author Ataxexe
+@JsonDeserialize(using = ConfigurationDeserializer.class)
 public interface Configuration extends InputValue {
 
   /// Represents a not supplied configuration. Basically a `null` object.
@@ -46,6 +49,11 @@ public interface Configuration extends InputValue {
   /// @return `true` if this source holds any configuration value.
   boolean isSet();
 
+  /// Checks if this configuration {@link #isSet() is set} and, Ifi it's set,
+  /// invokes the given action.
+  ///
+  /// @param action the action to invoke if this configuration is set
+  /// @return a reference to this instance
   default Configuration ifSet(Consumer<Configuration> action) {
     if (isSet()) {
       action.accept(this);

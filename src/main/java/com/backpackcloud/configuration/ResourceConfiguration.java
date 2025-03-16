@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/// A configuration based on the existence of a resource in the classpath.
+///
+/// @author Ataxexe
 public class ResourceConfiguration implements Configuration {
 
   private final ClassLoader classLoader;

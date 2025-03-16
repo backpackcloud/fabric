@@ -28,16 +28,19 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.function.Predicate;
 
-public class ConstructorPredicates {
+/// A class that holds a set of predicates for using with Constructor objects.
+///
+/// @author Ataxexe
+public final class ConstructorPredicates {
 
   private ConstructorPredicates() {
 
   }
 
-  public static Predicate<Constructor> ofName(String name) {
-    return constructor -> constructor.getName().equals(name);
-  }
-
+  /// Creates a predicate that tests if a constructor is annotated with the given annotation.
+  ///
+  /// @param type the annotation to check
+  /// @return a new predicate
   public static Predicate<Constructor> annotatedWith(Class<? extends Annotation> type) {
     return constructor -> constructor.isAnnotationPresent(type);
   }

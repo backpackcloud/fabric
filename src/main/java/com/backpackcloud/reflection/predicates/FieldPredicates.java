@@ -28,20 +28,35 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.function.Predicate;
 
+/// A class that holds a set of predicates for using with Field objects.
+///
+/// @author Ataxexe
 public final class FieldPredicates {
 
   private FieldPredicates() {
 
   }
 
+  /// Creates a predicate that tests if a field has the given name.
+  ///
+  /// @param name the name to check
+  /// @return a new predicate
   public static Predicate<Field> ofName(String name) {
     return field -> field.getName().equals(name);
   }
 
+  /// Creates a predicate that tests if a field has a type compatible with the given type.
+  ///
+  /// @param type the type to check
+  /// @return a new predicate
   public static Predicate<Field> ofType(Class<?> type) {
     return field -> type.isAssignableFrom(field.getType());
   }
 
+  /// Creates a predicate that tests if a field is annotated with the given annotation.
+  ///
+  /// @param type the annotation to check
+  /// @return a new predicate
   public static Predicate<Field> annotatedWith(Class<? extends Annotation> type) {
     return field -> field.isAnnotationPresent(type);
   }

@@ -24,7 +24,10 @@
 
 package com.backpackcloud.configuration;
 
-// TODO support pointing to a URL
+/// A configuration that is based on the existence of a system property.
+///
+/// @author Ataxexe
+/// @see System#getProperties()
 public class SystemPropertyConfiguration implements Configuration {
 
   private final String key;

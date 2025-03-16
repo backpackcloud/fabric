@@ -24,23 +24,26 @@
 
 package com.backpackcloud.configuration;
 
-// TODO support pointing to a URL
+/// A configuration that is based on the existence of a specific environment variable. 
+/// 
+/// @author Ataxexe
+/// @see System#getenv() 
 public class EnvironmentVariableConfiguration implements Configuration {
 
-  private final String key;
+  private final String name;
 
-  public EnvironmentVariableConfiguration(String key) {
-    this.key = key.trim();
+  public EnvironmentVariableConfiguration(String name) {
+    this.name = name.trim();
   }
 
   @Override
   public boolean isSet() {
-    return System.getenv().containsKey(key);
+    return System.getenv().containsKey(name);
   }
 
   @Override
   public String get() {
-    return System.getenv(key);
+    return System.getenv(name);
   }
 
 }

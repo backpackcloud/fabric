@@ -32,10 +32,13 @@ import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/// A configuration based on the contents of a given url.
+///
+/// @author Ataxexe
 public class UrlConfiguration implements Configuration {
 
-  private final URL    url;
-  private       String content;
+  private final URL url;
+  private String content;
 
   public UrlConfiguration(String url) {
     try {

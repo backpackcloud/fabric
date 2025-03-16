@@ -39,55 +39,64 @@ import java.util.stream.Stream;
 /// for naming the locations. All based on analysis of the digital forges used
 /// by both Elves and Dwarfs for multiple centuries.
 ///
-/// The conventions used by this class, in the priority order are:
-///
-/// - File located at `env {NAME}_CONFIG_FILE`
-/// - File located at `WORK_DIR/{name}.yml`
-/// - File located at `USER_HOME/{name}.yml`
-/// - Resource located at `META-INF/{name}.yml`
-///
-/// Where `{name}` is the variable part that is given for each instance of this class.
-///
 /// Before you start throwing your left arm, remember: this is an opinionated thing.
 ///
+/// @param name      the name of the application
+/// @param extension the extension of the configuration file
 /// @author Ataxexe
-public class ConfigurationSupplier implements Supplier<Configuration> {
+public record ConfigurationSupplier(String name, String extension) implements Supplier<Configuration> {
 
-  /// Holds the name that will be used as a convention
-  private final String name;
-
-  /// Creates a new Configuration Supplier using the given name to be used
-  /// in the conventions.
-  ///
-  /// @param name the name to be used as part of the conventions.
+  /// An even more opinionated way of instantiating this class. It defaults to
+  /// `yml` as the extension to use.
   public ConfigurationSupplier(String name) {
-    this.name = name;
+    this(name, "yml");
   }
 
+  /// Gets a configuration by checking a priority order for the fist one that is set:
+  ///
+  /// - {@link #fromEnvironment() environment}
+  /// - {@link #fromWorkingDir() working dir}
+  /// - {@link #fromUserHome() user home}
+  /// - {@link #getDefault() default}
   public Configuration get() {
-    return Stream.of(fromEnvironment(),
+    return Stream.of(
+        fromEnvironment(),
         fromWorkingDir(),
-        fromUserHome())
+        fromUserHome(),
+        getDefault()
+      )
       .filter(Configuration::isSet)
       .findFirst()
-      .orElseGet(this::getDefault);
+      .orElse(Configuration.NOT_SUPPLIED);
   }
 
+  /// Gets a configuration using the file pointed by the environment variable `{NAME}_CONFIG_FILE`.
+  ///
+  /// @return a new configuration.
   public Configuration fromEnvironment() {
     String path = System.getenv(name.toUpperCase() + "_CONFIG_FILE");
     return path != null ? new FileConfiguration(path) : Configuration.NOT_SUPPLIED;
   }
 
+  /// Gets a configuration using the file located at `WORK_DIR/{name}.{extension}`
+  ///
+  /// @return a new configuration.
   public Configuration fromWorkingDir() {
-    return new FileConfiguration("./" + name + ".yml");
+    return new FileConfiguration("./" + name + "." + extension);
   }
 
+  /// Gets a configuration using the file located at `USER_HOME/{name}.{extension}`.
+  ///
+  /// @return a new configuration.
   public Configuration fromUserHome() {
-    return new FileConfiguration(System.getProperty("user.home") + "/" + name + ".yml");
+    return new FileConfiguration(System.getProperty("user.home") + "/" + name + "." + extension);
   }
 
+  /// Gets a configuration using the file located at `META-INF/{name}.{extension}`.
+  ///
+  /// @return a new configuration.
   public Configuration getDefault() {
-    return new ResourceConfiguration("META-INF/" + name + ".yml");
+    return new ResourceConfiguration("META-INF/" + name + "." + extension);
   }
 
 }

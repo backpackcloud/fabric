@@ -31,6 +31,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/// A configuration that is based on the existence of a file in the filesystem.
+///
+/// @author Ataxexe
 public class FileConfiguration implements Configuration {
 
   private final String path;

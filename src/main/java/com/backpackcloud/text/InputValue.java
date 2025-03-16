@@ -24,6 +24,9 @@
 
 package com.backpackcloud.text;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalQuery;
@@ -44,10 +47,13 @@ public interface InputValue extends Supplier<String> {
   /// Gets this input value as it is. Might be {@code null}.
   ///
   /// @see #asText()
+  @JsonValue
   @Override
   String get();
 
-  /// Wraps the input value in an Optional for handling {@code null} values in an easier way.
+  /// Wraps the input value in an Optional.
+  ///
+  /// Empty Strings or `null` values yield {@link Optional#isEmpty() empty} optionals.
   ///
   /// @return the input value wrapped in an Optional object.
   default Optional<String> asText() {
@@ -156,7 +162,15 @@ public interface InputValue extends Supplier<String> {
   ///
   /// @return A stream of each input value
   default Stream<InputValue> split() {
-    return Arrays.stream(get().split("\\s*,\\s*"))
+    return split(s -> s.split("\\s*,\\s*"));
+  }
+
+  /// Splits this InputValue in multiple instances by splitting its value using the given function.
+  ///
+  /// @param function the function to split the value
+  /// @return A stream of each input value
+  default Stream<InputValue> split(Function<String, String[]> function) {
+    return Arrays.stream(function.apply(get()))
       .map(InputValue::of);
   }
 
@@ -164,6 +178,7 @@ public interface InputValue extends Supplier<String> {
   ///
   /// @param input the actual input value
   /// @return a new InputValue instance
+  @JsonCreator
   static InputValue of(String input) {
     return () -> input;
   }
@@ -175,5 +190,8 @@ public interface InputValue extends Supplier<String> {
   static InputValue of(Supplier<String> input) {
     return input::get;
   }
+
+  /// Represents an empty InputValue
+  InputValue EMPTY = () -> null;
 
 }

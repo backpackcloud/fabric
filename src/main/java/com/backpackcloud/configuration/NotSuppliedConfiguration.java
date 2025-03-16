@@ -27,6 +27,9 @@ package com.backpackcloud.configuration;
 import java.util.Collections;
 import java.util.List;
 
+/// Represents a configuration that is not set. In other terms, a `Null Object`.
+///
+/// @author Ataxexe
 public class NotSuppliedConfiguration implements Configuration {
 
   @Override

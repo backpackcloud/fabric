@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2025 Marcelo "Ataxexe" Guimarães
+ * Copyright (c) 2022 Marcelo Guimarães
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,18 @@
  * SOFTWARE.
  */
 
-package com.backpackcloud.text;
+package com.backpackcloud.preferences;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-public class RegexAnalyzer {
-
-  private final Pattern pattern;
-
-  public RegexAnalyzer(Pattern pattern) {
-    this.pattern = pattern;
-  }
-
-  public Set<String> namedGroups() {
-    Pattern groupPattern = Pattern.compile("\\?<(?<field>\\w+)>");
-    Set<String> result = new HashSet<>();
-
-    Matcher matcher = groupPattern.matcher(pattern.toString());
-    while (matcher.find()) {
-      result.add(matcher.group("field"));
-    }
-
-    return result;
-  }
+/// Specifies a preference.
+///
+/// The specification basically tells information about the preference and
+/// how it gets converted into a useful value.
+///
+/// @param id           the id of the preference
+/// @param description  the description of the preference
+/// @param type         the type of the preference
+/// @param defaultValue the default value of the preference
+/// @author Marcelo "Ataxexe" Guimarães
+public record PreferenceSpec<E>(String id, String description, PreferenceType<E> type, String defaultValue) {
 
 }
