@@ -45,7 +45,7 @@ public class MirrorTest {
   @Test
   public void testListConstructors() {
     assertEquals(1, reflect(Object.class).constructors().size());
-    assertEquals(19, reflect(String.class).constructors().size());
+    assertEquals(15, reflect(String.class).constructors().size());
   }
 
 }

@@ -133,22 +133,22 @@ public class Mirror {
       .findFirst();
   }
 
-  /// Reflects the constructors of the target.
+  /// Reflects the public constructors of the target.
   ///
   /// @return the constructors found in the target class.
-  /// @see Class#getDeclaredConstructors()
+  /// @see Class#getConstructors()
   public List<Constructor> constructors() {
-    return List.of(targetType.getDeclaredConstructors());
+    return List.of(targetType.getConstructors());
   }
 
-  /// Reflects the constructor that matches the given signature.
+  /// Reflects the public constructor that matches the given signature.
   ///
   /// @param parameterTypes the parameter types declared in the constructor
   /// @return the constructor that matches the given signature.
-  /// @see Class#getDeclaredConstructor(Class[])
+  /// @see Class#getConstructor(Class[])
   public Optional<Constructor> constructor(Class<?>... parameterTypes) {
     try {
-      return Optional.of(targetType.getDeclaredConstructor(parameterTypes));
+      return Optional.of(targetType.getConstructor(parameterTypes));
     } catch (NoSuchMethodException e) {
       return Optional.empty();
     }
