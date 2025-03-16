@@ -178,9 +178,19 @@ public interface InputValue extends Supplier<String> {
   ///
   /// @param input the actual input value
   /// @return a new InputValue instance
-  @JsonCreator
   static InputValue of(String input) {
     return () -> input;
+  }
+
+  /// Creates a basic input value from the provided string representation of
+  /// the given value.
+  ///
+  /// @param value the value to extract its string representation
+  /// @return a new InputValue instance
+  /// @see String#valueOf(Object)
+  @JsonCreator
+  static InputValue of(Object value) {
+    return of(String.valueOf(value));
   }
 
   /// Creates an input value around the given supplier.
