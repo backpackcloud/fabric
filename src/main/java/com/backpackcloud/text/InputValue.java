@@ -44,29 +44,40 @@ import java.util.stream.Stream;
 /// @author Ataxexe
 public interface InputValue extends Supplier<String> {
 
-  /// Gets this input value as it is. Might be {@code null}.
+  /// Represents an empty InputValue
+  InputValue EMPTY = () -> null;
+
+  /// Gets this input value as it is. Might be `null`.
   ///
   /// @see #asText()
   @JsonValue
   @Override
   String get();
 
+  /// Checks if this InputValue holds an empty value.
+  ///
+  /// @return `true` if the value is empty.
+  default boolean isEmpty() {
+    String value = get();
+    return value == null || value.isBlank();
+  }
+
   /// Wraps the input value in an Optional.
   ///
-  /// Empty Strings or `null` values yield {@link Optional#isEmpty() empty} optionals.
+  /// Empty Strings or `null` values yield [empty][Optional#isEmpty()] optionals.
   ///
   /// @return the input value wrapped in an Optional object.
   default Optional<String> asText() {
     String value = get();
-    return value == null || value.isEmpty() ? Optional.empty() : Optional.of(value);
+    return value == null || value.isBlank() ? Optional.empty() : Optional.of(value);
   }
 
-  /// Short to {@code asText().map(mapper)}
+  /// Short to [#asText().map(mapper)]
   default <T> Optional<T> map(Function<String, T> mapper) {
     return asText().map(mapper);
   }
 
-  /// Converts the {@link #asText() text} value to an Integer object.
+  /// Converts the [text][#asText()] value to an Integer object.
   ///
   /// An exception while converting will result in an empty Optional.
   ///
@@ -80,7 +91,7 @@ public interface InputValue extends Supplier<String> {
     }
   }
 
-  /// Converts the {@link #asText() text} value to a Long object.
+  /// Converts the [text][#asText()] value to a Long object.
   ///
   /// An exception while converting will result in an empty Optional.
   ///
@@ -94,7 +105,7 @@ public interface InputValue extends Supplier<String> {
     }
   }
 
-  /// Converts the {@link #asText() text} value to a Double object.
+  /// Converts the [text][#asText()] value to a Double object.
   ///
   /// An exception while converting will result in an empty Optional.
   ///
@@ -108,7 +119,7 @@ public interface InputValue extends Supplier<String> {
     }
   }
 
-  /// Converts the {@link #asText() text} value to a Boolean object.
+  /// Converts the [text][#asText()] value to a Boolean object.
   ///
   /// An exception while converting will result in an empty Optional.
   ///
@@ -118,7 +129,7 @@ public interface InputValue extends Supplier<String> {
     return map(Boolean::parseBoolean);
   }
 
-  /// Converts the {@link #asText() text} value to a Temporal object defined by the
+  /// Converts the [text][#asText()] value to a Temporal object defined by the
   /// provided pattern and TemporalQuery.
   ///
   /// An exception while converting will result in an empty Optional.
@@ -134,7 +145,7 @@ public interface InputValue extends Supplier<String> {
     }
   }
 
-  /// Converts the {@link #asText() text} value to an Enum object defined by the
+  /// Converts the [text][#asText()] value to an Enum object defined by the
   /// provided enum class.
   ///
   /// In order to increase the chances of a successful conversion, the following steps are
@@ -206,8 +217,5 @@ public interface InputValue extends Supplier<String> {
   static InputValue of(Supplier<String> input) {
     return input::get;
   }
-
-  /// Represents an empty InputValue
-  InputValue EMPTY = () -> null;
 
 }
