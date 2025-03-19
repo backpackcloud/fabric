@@ -179,6 +179,9 @@ public interface InputValue extends Supplier<String> {
   /// @param input the actual input value
   /// @return a new InputValue instance
   static InputValue of(String input) {
+    if (input == null) {
+      return EMPTY;
+    }
     return () -> input;
   }
 
@@ -190,6 +193,9 @@ public interface InputValue extends Supplier<String> {
   /// @see String#valueOf(Object)
   @JsonCreator
   static InputValue of(Object value) {
+    if (value == null) {
+      return EMPTY;
+    }
     return of(String.valueOf(value));
   }
 

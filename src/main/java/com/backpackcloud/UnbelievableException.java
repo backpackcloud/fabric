@@ -27,7 +27,7 @@ package com.backpackcloud;
 import java.io.Serial;
 import java.util.function.Supplier;
 
-/// Legend says this exception raises from the deepness circuits, usually awaken by
+/// Legend says this exception raises from the deepness of circuits, usually awaken by
 /// digital incarnations of Murphy.
 ///
 /// Catching this exception may lead to unrecoverable systems, memory leak, data leak,
@@ -58,9 +58,10 @@ public class UnbelievableException extends RuntimeException {
     super(message);
   }
 
-  /// Offers a mere throwable for the Kraken of the bit sea, alongside with a plea.
+  /// Offers a mere throwable for the Kraken of the bit sea, alongside with a plea in hope
+  /// for forgiveness... and an extra slice of bacon in your last sandwich.
   ///
-  /// Do not expect anything good in return. You're on your own.
+  /// But do not expect anything in return. You're on your own.
   ///
   /// @param message your plea
   /// @param cause   your offer
@@ -98,6 +99,14 @@ public class UnbelievableException extends RuntimeException {
   /// @see #UnbelievableException(String)
   public static Supplier<UnbelievableException> because(String reason) {
     return () -> new UnbelievableException(reason);
+  }
+
+  /// Holds the crap tight, until it forms a singularity ready to absorb every bit that dares stay nearby.
+  ///
+  /// @param reasonSupplier your last bet to give your app another CPU cycle
+  /// @see #UnbelievableException(String)
+  public static Supplier<UnbelievableException> because(Supplier<String> reasonSupplier) {
+    return () -> new UnbelievableException(reasonSupplier.get());
   }
 
 }

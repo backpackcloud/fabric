@@ -186,6 +186,9 @@ class InputValueTest {
     assertEquals("foo", value.get());
 
     verify(supplier, times(1)).get();
+
+    assertTrue(InputValue.of((Object) null).asText().isEmpty());
+    assertTrue(InputValue.of((String) null).asText().isEmpty());
   }
 
 }
