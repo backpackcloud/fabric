@@ -64,7 +64,7 @@ public interface InputValue extends Supplier<String> {
 
   /// Wraps the input value in an Optional.
   ///
-  /// Empty Strings or `null` values yield [empty][Optional#isEmpty()] optionals.
+  /// [Blank][String#isBlank()] Strings or `null` values yield [empty][Optional#isEmpty()] optionals.
   ///
   /// @return the input value wrapped in an Optional object.
   default Optional<String> asText() {
