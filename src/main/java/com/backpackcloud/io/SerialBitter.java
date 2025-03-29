@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2022 Marcelo Guimarães
+ * Copyright (c) 2025 Marcelo "Ataxexe" Guimarães
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,11 +39,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+/// A simple and highly opinionated component based on the Jackson library to perform
+///  serialization and deserialization.
+///
+/// @author Ataxexe
 public class SerialBitter implements Serializer, Deserializer {
 
   private final ObjectMapper objectMapper;
   private final InjectableValues.Std values;
 
+  /// Creates a new instance that will delegate the operations to the given object mapper.
+  ///
+  /// The mapper will be configured using the idiosyncrasies of this class... you've been warned.
+  ///
+  /// @param objectMapper the mapper to delegate the operations
   public SerialBitter(ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
 
@@ -56,6 +65,7 @@ public class SerialBitter implements Serializer, Deserializer {
     addDependency(SerialBitter.class, this);
   }
 
+  /// @return the object mapper used by this instance
   public ObjectMapper mapper() {
     return objectMapper;
   }

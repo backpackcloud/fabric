@@ -40,6 +40,29 @@
 
   <url>https://github.com/backpackcloud/fabric</url>
 
+  <licenses>
+    <license>
+      <name>The MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>ataxexe</id>
+      <name>Marcelo "Ataxexe" Guimarães</name>
+      <email>ataxexe@backpackcloud.com</email>
+      <url>https://www.backpackcloud.com</url>
+      <organizationUrl>https://github.com/backpackcloud</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git@github.com:backpackcloud/fabric.git</connection>
+    <url>https://github.com/backpackcloud/fabric</url>
+  </scm>
+
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
