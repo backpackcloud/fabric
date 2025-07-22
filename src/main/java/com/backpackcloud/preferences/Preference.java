@@ -24,6 +24,8 @@
 
 package com.backpackcloud.preferences;
 
+import com.backpackcloud.text.InputValue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -58,9 +60,9 @@ public class Preference<E> {
     return this.currentValue;
   }
 
-  /// @return the input String which generated the current [#value()].
-  public String inputValue() {
-    return this.currentInputValue;
+  /// @return the input value which generated the current [#value()].
+  public InputValue inputValue() {
+    return InputValue.of(this.currentInputValue);
   }
 
   /// Changes the value by supplying an input String.
