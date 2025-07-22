@@ -30,7 +30,7 @@
 
   <groupId>com.backpackcloud</groupId>
   <artifactId>fabric</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 
   <name>fabric</name>
 
@@ -78,18 +78,24 @@
     <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
-    <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
     <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
-
+    <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
     <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
 
     <jackson-version>2.18.1</jackson-version>
 
     <junit.version>5.10.5</junit.version>
     <mockito.version>4.8.0</mockito.version>
+    <version-tm.version>1.2.0</version-tm.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>com.backpackcloud</groupId>
+      <artifactId>version-tm</artifactId>
+      <version>${version-tm.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
@@ -223,14 +229,13 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>${nexus-staging-maven-plugin.version}</version>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>${central-publishing-maven-plugin.version}</version>
         <extensions>true</extensions>
         <configuration>
-          <serverId>${distribution.id}</serverId>
-          <nexusUrl>${distribution.url}</nexusUrl>
-          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          <publishingServerId>central</publishingServerId>
+          <autoPublish>true</autoPublish>
         </configuration>
       </plugin>
       <plugin>
@@ -243,16 +248,5 @@
       </plugin>
     </plugins>
   </build>
-
-   <distributionManagement>
-    <snapshotRepository>
-      <id>${distribution.id}</id>
-      <url>${distribution.url.snapshot}</url>
-    </snapshotRepository>
-    <repository>
-      <id>${distribution.id}</id>
-      <url>${distribution.url.release}</url>
-    </repository>
-  </distributionManagement>
 
 </project>
