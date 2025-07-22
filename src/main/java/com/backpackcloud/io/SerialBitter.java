@@ -25,10 +25,16 @@
 package com.backpackcloud.io;
 
 import com.backpackcloud.UnbelievableException;
+import com.backpackcloud.io.deserializers.VersionDeserializer;
+import com.backpackcloud.io.serializers.VersionSerializer;
+import com.backpackcloud.versiontm.Version;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -63,11 +69,32 @@ public class SerialBitter implements Serializer, Deserializer {
     this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     addDependency(SerialBitter.class, this);
+    addSerializer(new VersionSerializer());
+    addDeserializer(Version.class, new VersionDeserializer());
   }
 
   /// @return the object mapper used by this instance
   public ObjectMapper mapper() {
     return objectMapper;
+  }
+
+  /// Registers the given serializer
+  ///
+  /// @param serializer the serializer to register
+  /// @return a reference to this object
+  public SerialBitter addSerializer(JsonSerializer<?> serializer) {
+    this.objectMapper.registerModule(new SimpleModule().addSerializer(serializer));
+    return this;
+  }
+
+  /// Registers the given deserializer
+  ///
+  /// @param type the type that will be deserialized into
+  /// @param deserializer the deserializer to register
+  /// @return a reference to this object
+  public <T> SerialBitter addDeserializer(Class<T> type, JsonDeserializer<T> deserializer) {
+    this.objectMapper.registerModule(new SimpleModule().addDeserializer(type, deserializer));
+    return this;
   }
 
   /// Adds a dependency using the given type.
@@ -76,7 +103,7 @@ public class SerialBitter implements Serializer, Deserializer {
   ///
   /// @param type       the type of the injection point
   /// @param dependency the dependency to inject
-  /// @return a reference to this serializer
+  /// @return a reference to this object
   public <E> SerialBitter addDependency(Class<E> type, E dependency) {
     values.addValue(type, dependency);
     return this;
