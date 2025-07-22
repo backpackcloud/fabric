@@ -161,4 +161,13 @@ public interface Configuration extends InputValue {
     return new RawValueConfiguration(value);
   }
 
+  /// Creates and returns a configuration that only holds the given input value.
+  ///
+  /// @param value the value of the configuration
+  /// @return a new Configuration object
+  /// @see RawValueConfiguration
+  static Configuration value(InputValue value) {
+    return new RawValueConfiguration(value.get());
+  }
+
 }
