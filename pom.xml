@@ -30,7 +30,7 @@
 
   <groupId>com.backpackcloud</groupId>
   <artifactId>fabric</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 
   <name>fabric</name>
 
@@ -86,7 +86,7 @@
 
     <junit.version>5.10.5</junit.version>
     <mockito.version>4.8.0</mockito.version>
-    <version-tm.version>1.2.0</version-tm.version>
+    <version-tm.version>2.0.0</version-tm.version>
   </properties>
 
   <dependencies>
@@ -194,6 +194,9 @@
         <version>${maven-compiler-plugin-version}</version>
         <configuration>
           <compilerArgument>-parameters</compilerArgument>
+          <source>21</source>
+          <target>21</target>
+          <compilerArgs>--enable-preview</compilerArgs>
         </configuration>
       </plugin>
       <plugin>
