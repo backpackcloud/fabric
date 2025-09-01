@@ -31,8 +31,6 @@ import com.backpackcloud.versiontm.Version;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
@@ -68,33 +66,17 @@ public class SerialBitter implements Serializer, Deserializer {
     this.objectMapper.registerModules(new Jdk8Module(), new JavaTimeModule(), new ParameterNamesModule());
     this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
+    SimpleModule simpleModule = new SimpleModule();
+    simpleModule.addDeserializer(Version.class, new VersionDeserializer());
+    simpleModule.addSerializer(Version.class, new VersionSerializer());
+    objectMapper.registerModule(simpleModule);
+
     addDependency(SerialBitter.class, this);
-    addSerializer(new VersionSerializer());
-    addDeserializer(Version.class, new VersionDeserializer());
   }
 
   /// @return the object mapper used by this instance
   public ObjectMapper mapper() {
     return objectMapper;
-  }
-
-  /// Registers the given serializer
-  ///
-  /// @param serializer the serializer to register
-  /// @return a reference to this object
-  public SerialBitter addSerializer(JsonSerializer<?> serializer) {
-    this.objectMapper.registerModule(new SimpleModule().addSerializer(serializer));
-    return this;
-  }
-
-  /// Registers the given deserializer
-  ///
-  /// @param type the type that will be deserialized into
-  /// @param deserializer the deserializer to register
-  /// @return a reference to this object
-  public <T> SerialBitter addDeserializer(Class<T> type, JsonDeserializer<T> deserializer) {
-    this.objectMapper.registerModule(new SimpleModule().addDeserializer(type, deserializer));
-    return this;
   }
 
   /// Adds a dependency using the given type.
