@@ -219,4 +219,8 @@ public interface InputValue extends Supplier<String> {
     return input::get;
   }
 
+  static InputValue of(Enum enumValue) {
+    return of(enumValue.name().toLowerCase().replaceAll("_", "-"));
+  }
+
 }
