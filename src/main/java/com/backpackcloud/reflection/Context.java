@@ -24,7 +24,11 @@
 
 package com.backpackcloud.reflection;
 
+import com.backpackcloud.UnbelievableException;
+
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,6 +138,47 @@ public class Context {
   /// @see #resolve(Parameter[])
   public Object[] resolve(Executable executable) {
     return resolve(executable.getParameters());
+  }
+
+  /// Tries to create an instance of the given class using this context to resolve any constructor parameter.
+  ///
+  /// @return the created instance
+  public <T> T create(Class<T> objectClass) {
+    List<Constructor> constructors = Mirror.reflect(objectClass).constructors();
+    if (constructors.isEmpty()) {
+      throw new UnbelievableException("Object doesn't have a public accessible constructor");
+    }
+    if (constructors.size() == 1) {
+      try {
+        Constructor constructor = constructors.getFirst();
+        Object[] args = resolve(constructor);
+        return (T) constructor.newInstance(args);
+      } catch (InstantiationException | IllegalAccessException e) {
+        throw new UnbelievableException(e);
+      } catch (InvocationTargetException e) {
+        throw new UnbelievableException(e.getTargetException());
+      }
+    }
+    for (Constructor<?> constructor : constructors) {
+      Object[] args = resolve(constructor);
+      boolean valid = true;
+      for (Object arg : args) {
+        if (arg == null) {
+          valid = false;
+          break;
+        }
+      }
+      if (valid) {
+        try {
+          return (T) constructor.newInstance(args);
+        } catch (InstantiationException | IllegalAccessException e) {
+          throw new UnbelievableException(e);
+        } catch (InvocationTargetException e) {
+          throw new UnbelievableException(e.getTargetException());
+        }
+      }
+    }
+    throw new UnbelievableException("Unable to create an instance of " + objectClass);
   }
 
   private record Entry(Predicate<? super Parameter> predicate,
